@@ -1,0 +1,14 @@
+[
+    {
+        "task": "Learn Python",
+        "completed": true
+    },
+    {
+        "task": "Learn Git",
+        "completed": true
+    },
+    {
+        "task": "Take a walk",
+        "completed": false
+    }
+]
