@@ -1,7 +1,8 @@
 class Task:
-    def __init__(self, title):
-        self.title = title
+    def __init__(self, task):
+        self.task = task
         self.completed = False
 
     def complete(self):
         self.completed = True
+

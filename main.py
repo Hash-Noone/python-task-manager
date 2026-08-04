@@ -1,102 +1,56 @@
-import json
-import os
+from storage import load_tasks, save_tasks
+from task import Task
+from task_manager import TaskManager
 
-def load_tasks():
-    if os.path.exists("tasks.json"):
-        with open("tasks.json", "r") as f:
-            try:
-                return json.load(f)
-            except json.JSONDecodeError:
-                return []
-    return []
+tasks = load_tasks()
+task_manager = TaskManager(tasks)
 
-def save_tasks(tasks):
-    with open("tasks.json", "w") as f:
-        json.dump(tasks, f, indent=4)
+while True:
+    print("\n===== Task Manager =====")
+    print("1. Add Task")
+    print("2. View Tasks")
+    print("3. Complete Task")
+    print("4. Delete Task")
+    print("5. Save and Exit")
 
-def get_task_index(tasks):
-    try:
-        return int(input("Enter the task number: ")) - 1
-    except ValueError:
-        print("Please enter a valid number.")
-        return -1
+    choice = input("Choose: ")
 
-def add_task(tasks):
-    task = input("Enter the task: ").strip()
-    if not task:
-        print("Task cannot be empty.")
-        return
-    tasks.append({"task": task, "completed": False})
-    print(f"Added task: '{task}'")
+    match choice:
+        case "1":
+            title = input("Enter task title: ")
+            if title.strip() == "":
+                print("Task title cannot be empty.")
+                continue
+            task = Task(title)
+            task_manager.add_task(task)
+            print("Task added successfully.")
+            save_tasks(task_manager.tasks)
 
-def view_tasks(tasks):
-    if not tasks:
-        print("No tasks to display.")
-    else:
-        for i, t in enumerate(tasks, start=1):
-            status = "✓" if t["completed"] else "✗"
-            print(f"{i}. [{status}] {t['task']}")
+        case "2":
+            if not task_manager.tasks:
+                print("No tasks available.")
+            else:
+                task_manager.view_tasks()
 
-def complete_task(tasks):
-    if not tasks:
-        print("No tasks to display.")
-        return
-    view_tasks(tasks)
-    index = get_task_index(tasks)
-    if not 0 <= index < len(tasks):
-        print("Invalid task number.")
-        return
-    if tasks[index]["completed"]:
-        print(f"Task '{tasks[index]['task']}' is already completed.")
-    else:
-        tasks[index]["completed"] = True
-        print(f"Task '{tasks[index]['task']}' marked as completed.")
+        case "3":
+            index = int(input("Enter task number to complete: ")) - 1
+            if task_manager.complete_task(index):
+                save_tasks(task_manager.tasks)
+                print("Task completed.")
+            else:
+                print("Invalid task number.")
 
 
-def delete_task(tasks):
-    if not tasks:
-        print("No tasks to display.")
-        return
-    view_tasks(tasks)
-    index = get_task_index(tasks)
-    if not 0 <= index < len(tasks):
-        print("Invalid task number.")
-        return
-    deleted_task = tasks.pop(index)
-    print(f"Task '{deleted_task['task']}' deleted.")
+        case "4":
+            index = int(input("Enter task number to delete: ")) - 1
+            task_manager.delete_task(index)
+            save_tasks(task_manager.tasks)
+            print("Task deleted.")            
 
+        case "5":
+            save_tasks(task_manager.tasks)
+            print("Tasks saved. Goodbye!")
+            break
 
-def main():
-    tasks = load_tasks()
-
-    while True:
-        print("\n===== Task Manager =====")
-        print("1. Add Task")
-        print("2. View Tasks")
-        print("3. Complete Task")
-        print("4. Delete Task")
-        print("5. Save and Exit")
-
-        choice = input("Choose: ")
-        match choice:
-            case "1":
-                add_task(tasks)
-                save_tasks(tasks)
-            case "2":
-                view_tasks(tasks)
-            case "3":
-                complete_task(tasks)
-                save_tasks(tasks)
-            case "4":
-                delete_task(tasks)
-                save_tasks(tasks)
-            case "5":
-                save_tasks(tasks)
-                print("Tasks saved. Goodbye!")
-                print("Exiting...")
-                break
-            case _:
-                print("Invalid choice. Please try again.")
-
-if __name__ == "__main__":
-    main()
+        case _:
+            print("Invalid choice.")
