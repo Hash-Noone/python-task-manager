@@ -1,3 +1,5 @@
+"""Run the interactive task menu and save changes to disk."""
+
 from storage import load_tasks, save_tasks
 from task import Task
 from task_manager import TaskManager
@@ -33,6 +35,7 @@ while True:
                 task_manager.view_tasks()
 
         case "3":
+            # Menu task numbers start at 1; manager indexes start at 0.
             index = int(input("Enter task number to complete: ")) - 1
             if task_manager.complete_task(index):
                 save_tasks(task_manager.tasks)

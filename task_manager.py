@@ -2,6 +2,8 @@ from task import Task
 
 
 class TaskManager:
+    """Manage an in-memory task list using zero-based indexes."""
+
     def __init__(self, tasks=None):
         self.tasks = tasks if tasks is not None else []
 
@@ -11,11 +13,13 @@ class TaskManager:
         self.tasks.append(task)
 
     def view_tasks(self):
+        """Print task numbers and completion marks for the menu."""
         for i, task in enumerate(self.tasks, start=1):
             status = "✓" if task.completed else "✗"
             print(f"{i}. [{status}] {task.task}")
 
     def complete_task(self, index):
+        """Mark the task complete and return whether the index was valid."""
         if 0 <= index < len(self.tasks):
             self.tasks[index].complete()
             return True
