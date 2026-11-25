@@ -1,9 +1,12 @@
+"""Read and write tasks.json in the current working directory."""
+
 import json
 import os
 from task import Task
 
 
 def load_tasks():
+    """Load task objects, or return an empty list if JSON is missing or invalid."""
     if os.path.exists("tasks.json"):
         with open("tasks.json", "r") as f:
             try:
@@ -25,6 +28,7 @@ def load_tasks():
 
 
 def save_tasks(tasks):
+    """Overwrite the JSON file with the current task titles and statuses."""
     data = []
 
     data = [
